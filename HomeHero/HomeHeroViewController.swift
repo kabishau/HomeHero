@@ -93,6 +93,13 @@ class HomeHeroViewController: UIViewController {
       sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
     #endif
   }
+  
+  // this will add a new anchor in the hit result point
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let hit = sceneView.hitTest(viewCenter, types: [.existingPlaneUsingExtent]).first {
+      sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
+    }
+  }
 }
 
 extension HomeHeroViewController: ARSCNViewDelegate {
