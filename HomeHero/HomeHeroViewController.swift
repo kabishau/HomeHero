@@ -112,6 +112,17 @@ extension HomeHeroViewController: ARSCNViewDelegate {
           let planeNode = createPlaneNode(center: planeAnchor.center, extent: planeAnchor.extent)
           node.addChildNode(planeNode)
         #endif
+      } else {
+        switch self.currentMode {
+        case .none:
+          break
+        case .placeObject(let name):
+          let modelClone = nodeWithModelName(name)
+          self.objects.append(modelClone)
+          node.addChildNode(modelClone)
+        case .measure:
+          break
+        }
       }
     }
   }
