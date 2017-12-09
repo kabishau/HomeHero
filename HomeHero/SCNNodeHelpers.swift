@@ -7,6 +7,7 @@ func nodeWithModelName(_ modelName: String) -> SCNNode {
     return SCNScene(named: modelName)!.rootNode.clone()
 }
 
+// This is SceneKit-specific code that creates a blue plane SCNNode with given center and extent taken from ARPlaneAnchor
 func createPlaneNode(center: vector_float3, extent: vector_float3) -> SCNNode {
     let plane = SCNPlane(width: CGFloat(extent.x), height: CGFloat(extent.z))
     
@@ -20,6 +21,7 @@ func createPlaneNode(center: vector_float3, extent: vector_float3) -> SCNNode {
     return planeNode
 }
 
+// updates the coordinates and size of the plane to the updated values contained in ARPlaneAnchor
 func updatePlaneNode(_ node: SCNNode, center: vector_float3, extent: vector_float3) {
     let geometry = node.geometry as! SCNPlane
     
@@ -28,6 +30,7 @@ func updatePlaneNode(_ node: SCNNode, center: vector_float3, extent: vector_floa
     node.position = SCNVector3Make(center.x, 0, center.z)
 }
 
+// Removes the plane from the node if the corresponding ARAnchorPlane has been removed
 func removeChildren(inNode node: SCNNode) {
     for node in node.childNodes {
         node.removeFromParentNode()

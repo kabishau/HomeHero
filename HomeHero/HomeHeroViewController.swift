@@ -27,6 +27,7 @@ class HomeHeroViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    runSession()
     trackingInfo.text = ""
     messageLabel.text = ""
     distanceLabel.isHidden = true
@@ -80,4 +81,70 @@ class HomeHeroViewController: UIViewController {
     
     objects = []
   }
+  
+  func runSession() {
+    sceneView.delegate = self
+    let configuration = ARWorldTrackingConfiguration()
+    configuration.planeDetection = .horizontal
+    configuration.isLightEstimationEnabled = true
+    sceneView.session.run(configuration)
+    
+    #if DEBUG
+      sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
+    #endif
+  }
 }
+
+extension HomeHeroViewController: ARSCNViewDelegate {
+  
+  // rendering new planes
+  func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+    DispatchQueue.main.async {
+      if let planeAnchor = anchor as? ARPlaneAnchor {
+        #if DEBUG
+          let planeNode = createPlaneNode(center: planeAnchor.center, extent: planeAnchor.extent)
+          node.addChildNode(planeNode)
+        #endif
+      }
+    }
+  }
+  
+  // called when a corresponding ARAnchor is updated
+  func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+    DispatchQueue.main.async {
+      if let planeAnchor = anchor as? ARPlaneAnchor {
+        updatePlaneNode(node.childNodes[0], center: planeAnchor.center, extent: planeAnchor.extent)
+      }
+    }
+  }
+  
+  // called when ARAnchor is removed
+  func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
+    guard anchor is ARPlaneAnchor else { return }
+    removeChildren(inNode: node)
+  }
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
