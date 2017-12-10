@@ -98,6 +98,10 @@ class HomeHeroViewController: UIViewController {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     if let hit = sceneView.hitTest(viewCenter, types: [.existingPlaneUsingExtent]).first {
       sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
+      return
+    } else if let hit = sceneView.hitTest(viewCenter, types: [.featurePoint]).last {
+      sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
+      return
     }
   }
 }

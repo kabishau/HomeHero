@@ -3,6 +3,7 @@
 import SceneKit
 import ARKit
 
+// creates a new 3D model SCNNode with the given path name
 func nodeWithModelName(_ modelName: String) -> SCNNode {
     return SCNScene(named: modelName)!.rootNode.clone()
 }
