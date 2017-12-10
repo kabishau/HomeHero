@@ -104,6 +104,40 @@ class HomeHeroViewController: UIViewController {
       return
     }
   }
+  
+  // calculation logic of the distance between two measuring nodes
+  func measure(fromNode: SCNNode, toNode: SCNNode) {
+    let measuringLineNode = createLineNode(fromNode: fromNode, toNode: toNode)
+    measuringLineNode.name = "MeasureingLine"
+    sceneView.scene.rootNode.addChildNode(measuringLineNode)
+    objects.append(measuringLineNode)
+    let dist = fromNode.position.distanceTo(toNode.position)
+    let measurementValue = String(format: "%.2f", dist)
+    distanceLabel.text = "Distance: \(measurementValue) m"
+  }
+  
+  // logic that will update measurement state depending on the number of spheres
+  func updateMeasuringNodes() {
+    guard measuringNodes.count > 1 else { return }
+    let firstNode = measuringNodes[0]
+    let secondNode = measuringNodes[1]
+    
+    let showMeasuring = self.measuringNodes.count == 2
+    distanceLabel.isHidden = !showMeasuring
+    if showMeasuring {
+      measure(fromNode: firstNode, toNode: secondNode)
+    } else if measuringNodes.count > 2 {
+      firstNode.removeFromParentNode()
+      secondNode.removeFromParentNode()
+      measuringNodes.removeFirst(2)
+      
+      for node in sceneView.scene.rootNode.childNodes {
+        if node.name == "MeasureingLine" {
+          node.removeFromParentNode()
+        }
+      }
+    }
+  }
 }
 
 extension HomeHeroViewController: ARSCNViewDelegate {
@@ -125,7 +159,10 @@ extension HomeHeroViewController: ARSCNViewDelegate {
           self.objects.append(modelClone)
           node.addChildNode(modelClone)
         case .measure:
-          break
+          let sphereNode = createSphereNode(radius: 0.02)
+          self.objects.append(sphereNode)
+          node.addChildNode(sphereNode)
+          self.measuringNodes.append(node)
         }
       }
     }
@@ -136,6 +173,8 @@ extension HomeHeroViewController: ARSCNViewDelegate {
     DispatchQueue.main.async {
       if let planeAnchor = anchor as? ARPlaneAnchor {
         updatePlaneNode(node.childNodes[0], center: planeAnchor.center, extent: planeAnchor.extent)
+      } else {
+        self.updateMeasuringNodes()
       }
     }
   }
