@@ -148,6 +148,7 @@ extension HomeHeroViewController: ARSCNViewDelegate {
       if let planeAnchor = anchor as? ARPlaneAnchor {
         #if DEBUG
           let planeNode = createPlaneNode(center: planeAnchor.center, extent: planeAnchor.extent)
+          // node argument is an empty SCNNode that is automatically added to the scene by ARSCNView at a coordinate that corresponds to the anchor argument - attaching child planeNode to this empty node
           node.addChildNode(planeNode)
         #endif
       } else {
