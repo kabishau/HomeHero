@@ -138,6 +138,30 @@ class HomeHeroViewController: UIViewController {
       }
     }
   }
+  
+  // using the state information provided in ARFrame to let the user know when there are tracking problems
+  func updateTrackingInfo() {
+    guard let frame = sceneView.session.currentFrame else { return }
+    
+    switch frame.camera.trackingState {
+    case .limited(let reason):
+      switch reason {
+      case .excessiveMotion:
+        trackingInfo.text = "Limited Tracking: Excessive Motion"
+      case .insufficientFeatures:
+        trackingInfo.text = "Limited Tracking: Insufficient Details"
+      default:
+        trackingInfo.text = "Limited Tracking"
+      }
+    default:
+      trackingInfo.text = ""
+    }
+    
+    guard let lightEstimate = frame.lightEstimate?.ambientIntensity else { return }
+    if lightEstimate < 100 {
+      trackingInfo.text = "Limited Tracking: Too Dark"
+    }
+  }
 }
 
 extension HomeHeroViewController: ARSCNViewDelegate {
