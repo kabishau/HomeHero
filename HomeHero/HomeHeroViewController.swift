@@ -221,12 +221,22 @@ extension HomeHeroViewController: ARSCNViewDelegate {
       }
     }
   }
-
-
-
-
-
-
+  
+  // methods of ARSessionObserver - how ARSession informs its delegate about session interruptions and general errors
+  func session(_ session: ARSession, didFailWithError error: Error) {
+    showMessage(error.localizedDescription, label: messageLabel, seconds: 2)
+  }
+  
+  func sessionWasInterrupted(_ session: ARSession) {
+    showMessage("Session interrupted", label: messageLabel, seconds: 2)
+  }
+  
+  func sessionInterruptionEnded(_ session: ARSession) {
+    showMessage("Session resumed", label: messageLabel, seconds: 2)
+    
+    removeAllObjects()
+    runSession()
+  }
 
 
 }
