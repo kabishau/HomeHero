@@ -209,6 +209,18 @@ extension HomeHeroViewController: ARSCNViewDelegate {
     guard anchor is ARPlaneAnchor else { return }
     removeChildren(inNode: node)
   }
+  
+  // updates tracking label for each rendered frame
+  func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+    DispatchQueue.main.async {
+      self.updateTrackingInfo()
+      if let _ = self.sceneView.hitTest(self.viewCenter, types: [.existingPlaneUsingExtent]).first {
+        self.crosshair.backgroundColor = UIColor.green
+      } else {
+        self.crosshair.backgroundColor = UIColor(white: 0.34, alpha: 1)
+      }
+    }
+  }
 
 
 
